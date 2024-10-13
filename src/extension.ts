@@ -55,18 +55,23 @@ export function activate(context: vscode.ExtensionContext): void {
 
 	// For plugin command: "postcssSorting.execute"
 	const command = vscode.commands.registerTextEditorCommand('postcssSorting.execute', (textEditor) => {
+		const editor = vscode.window.activeTextEditor;
 		// Prevent run command without active TextEditor
-		if (!vscode.window.activeTextEditor) {
+		if (!editor) {
 			return null;
 		}
 
 		const document = textEditor.document;
+		const selection = editor.selection;
+		// const start = selection.start;
+		// const end = selection.end;
+		// const newSelection = new vscode.Selection(start.line, 0, end.line + 1, 0);
 
 		const workspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri);
 		const workspaceUri = workspaceFolder ? workspaceFolder.uri : null;
 		const settings = settingsManager.getSettings(workspaceUri);
 
-		use(settings, document, null)
+		use(settings, document, selection)
 			.then((result) => {
 				if (!result) {
 					return;
